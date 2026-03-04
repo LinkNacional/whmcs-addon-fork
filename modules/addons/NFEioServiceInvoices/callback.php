@@ -44,6 +44,11 @@ if (!Validations::webhookHashValid($secret, $body, $signature)) {
 
 $payload = json_decode($body, true);
 
+// Fix v1  to v2: Se a NFE.io mandar os dados encapsulados dentro da chave 'payload', nós extraímos para a raiz
+if (isset($payload['payload']) && is_array($payload['payload'])) {
+    $payload = $payload['payload'];
+}
+
 if (!is_array($payload) || !isset($payload['id'], $payload['status'], $payload['flowStatus'], $payload['environment'])) {
     logModuleCall('nfeio_serviceinvoices', 'callback_error', 'Payload inválido', ['body' => $payload]);
     http_response_code(400);
