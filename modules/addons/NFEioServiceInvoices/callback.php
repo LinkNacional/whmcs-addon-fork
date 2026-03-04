@@ -9,15 +9,15 @@ use NFEioServiceInvoices\Helpers\Validations;
 
 new NFEioServiceInvoices\Loader();
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo "Method Not Allowed";
-    exit();
-}
-
 if (isset($_GET['echo'])) {
     http_response_code(200);
     echo "ok";
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo "Method Not Allowed";
     exit();
 }
 
