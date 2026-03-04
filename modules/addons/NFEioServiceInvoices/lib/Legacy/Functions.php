@@ -160,13 +160,21 @@ class Functions
 
         // Verifica se o webhook existe e é válido, senão cria
         $webhook = $webhook_id ? $nfeio->getWebhook($webhook_id) : null;
-        if (!$webhook || $webhook->hooks->url !== $webhook_url) {
+        
+        $webhookValido = false;
+        // Confirma se o retorno é um objeto e tem a URL antes de tentar ler
+        if (is_object($webhook) && isset($webhook->hooks) && $webhook->hooks->url === $webhook_url) {
+            $webhookValido = true;
+        }
+
+        if (!$webhookValido) {
             $newHook = $nfeio->createWebhook($webhook_url);
-            if (!$newHook) {
-                return (object)['message' => 'Erro ao criar novo webhook'];
+            
+            // Só salva no banco se NÃO for um erro E se o objeto contiver os dados
+            if ($newHook && !is_array($newHook) && isset($newHook->hooks)) {
+                $storage->set('webhook_id', (string) $newHook->hooks->id);
+                $storage->set('webhook_secret', (string) $newHook->hooks->secret);
             }
-            $storage->set('webhook_id', (string) $newHook->hooks->id);
-            $storage->set('webhook_secret', (string) $newHook->hooks->secret);
         }
 
 
