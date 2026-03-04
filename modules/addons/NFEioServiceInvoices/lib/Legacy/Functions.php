@@ -97,16 +97,17 @@ class Functions
             $result['insc_municipal'] = $inscMunicipalCustomFieldValue;
         }
 
-        if ($cpfIsValid) {
-            $result['success'] = true;
-            $result['doc_type'] = 1;
-            $result['document'] = $cpf;
-            $result['name'] = $client->firstname . ' ' . $client->lastname;
-        } elseif ($cnpjIsValid) {
+        // INVERTEMOS A ORDEM AQUI: CNPJ PRIMEIRO!
+        if ($cnpjIsValid) { 
             $result['success'] = true;
             $result['doc_type'] = 2;
             $result['document'] = $cnpj;
             $result['name'] = $client->companyname ? $client->companyname : $client->firstname . ' ' . $client->lastname;
+        } elseif ($cpfIsValid) { 
+            $result['success'] = true;
+            $result['doc_type'] = 1;
+            $result['document'] = $cpf;
+            $result['name'] = $client->firstname . ' ' . $client->lastname;
         } else {
             $result['error'] = true;
             $result['message'] = 'Documento cadastrado não é um CPF ou CNPJ válido.';
