@@ -427,7 +427,12 @@ class Nfe
         // Validação do país do cliente
         $clientCountry = isset($clientData[0]['country']) ? $clientData[0]['country'] : null;
         $allowedCountries = $this->storage->get('issue_note_countries');
-        // Só bloqueia se existe e é array
+
+        // Decodifica a string JSON
+        if (is_string($allowedCountries)) {
+            $allowedCountries = json_decode($allowedCountries, true);
+        }
+
         if ($allowedCountries && is_array($allowedCountries)) {
             if ($clientCountry && !in_array($clientCountry, $allowedCountries)) {
                 // País não permitido, não emite nota

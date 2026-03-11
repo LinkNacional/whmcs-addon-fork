@@ -488,6 +488,12 @@ class Controller
             // Carregar países selecionados
             $storage = new \WHMCSExpert\Addon\Storage($config->getStorageKey());
             $selectedCountries = $storage->get('issue_note_countries');
+            
+            // Decodifica a string JSON vinda do banco de dados
+            if (is_string($selectedCountries)) {
+                $selectedCountries = json_decode($selectedCountries, true);
+            }
+
             if ($selectedCountries && is_array($selectedCountries)) {
                 $vars['issue_note_countries'] = $selectedCountries;
             } else {
@@ -535,7 +541,8 @@ class Controller
             ];
             $issue_note_countries = $isoCountries;
         }
-        $storage->set('issue_note_countries', $issue_note_countries);
+        // Garante que o array seja salvo como uma string JSON no banco de dados
+        $storage->set('issue_note_countries', json_encode($issue_note_countries));
             
     
 
